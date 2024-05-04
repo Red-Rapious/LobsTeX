@@ -21,6 +21,17 @@ pub struct RichString {
     tt: bool,
 }
 
+impl RichString {
+    pub fn standard(string: String) -> Self {
+        Self {
+            string,
+            bf: false,
+            it: false,
+            tt: false
+        }
+    }
+}
+
 #[derive(Debug)]
 pub enum Block {
     Paragraph(Vec<RichString>),

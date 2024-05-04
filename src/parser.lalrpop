@@ -1,10 +1,10 @@
 use std::str::FromStr;
-use crate::ast::{Document, DocumentInformation, Block}; // (0)
+use crate::ast::{Document, DocumentInformation, Block, RichString}; // (0)
 
 grammar;
 
 Text: String = {
-    <s:r"[\w| ]+"> => s.to_string()
+    <s:r"[\w| |0-9|,|.|;|/|?|!|+|=]+"> => s.to_string()
 }
 
 Info: DocumentInformation = {
@@ -22,10 +22,17 @@ Info: DocumentInformation = {
 }
 
 Body: Vec<Block> = {
+    "\\section{" <t:Text> "}" <mut b: Body> => { b.push(Block::SectionHeader(vec![RichString::standard(t)])); b },
+    "\\subsection{" <t:Text> "}" <mut b: Body> => { b.push(Block::SubsectionHeader(vec![RichString::standard(t)])); b },
+    <t:Text> <mut b: Body> => { b.push(Block::Paragraph(vec![RichString::standard(t)])); b },
+    "\\maketitle" <mut b: Body> => { b.push(Block::MakeTitle); b },
     "\\newpage" <mut b: Body> => { b.push(Block::NewPage); b },
     "\\end{document}" => vec![]
 }
 
 pub Document: Document = {
-    <info:Info> <body:Body> => Document { info, body }
+    "\\documentclass{article}" <info:Info> <mut body:Body> => {
+        body.reverse();
+        Document { info, body }
+    }
 }
