@@ -15,7 +15,7 @@ pub struct Document {
 
 #[derive(Debug)]
 pub struct RichString {
-    string: String,
+    pub string: String,
     bf: bool,
     it: bool,
     tt: bool,
@@ -27,7 +27,7 @@ impl RichString {
             string,
             bf: false,
             it: false,
-            tt: false
+            tt: false,
         }
     }
 }

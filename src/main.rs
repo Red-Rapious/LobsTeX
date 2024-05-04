@@ -16,8 +16,8 @@ fn main() {
     let file_path = &args[1];
     let code = std::fs::read_to_string(file_path).unwrap();
     let document = parser::DocumentParser::new().parse(code.as_str()).unwrap();
-    dbg!(document);
+    //dbg!(&document);
 
     let file_path = std::path::PathBuf::from(file_path);
-    //pdf::render_pdf(file_path);
+    pdf::render_pdf(file_path, document);
 }

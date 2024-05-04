@@ -10,13 +10,22 @@ Text: String = {
 Info: DocumentInformation = {
     // TODO: choose whether throw error when defined twice
     "\\date{" <s:Text> "}" <mut i:Info> => {
-        i.date = Some(s) ; i
+        if !s.is_empty() {
+            i.date = Some(s);
+        }
+        i
     },
     "\\title{" <s:Text> "}" <mut i:Info> => {
-        i.title = Some(s) ; i
+        if !s.is_empty() {
+            i.title = Some(s);
+        }
+        i
     },
     "\\author{" <s:Text> "}" <mut i:Info> => {
-        i.author = Some(s) ; i
+        if !s.is_empty() {
+            i.author = Some(s);
+        }
+        i
     },
     "\\begin{document}" => DocumentInformation::default()
 }
