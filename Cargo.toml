@@ -10,4 +10,4 @@ lalrpop = "0.20.2"
 
 [dependencies]
 lalrpop-util = { version = "0.20.2", features = ["lexer", "unicode"] }
-genpdf = "0.2.0"
+genpdf = { path = "./genpdf-rs/" }

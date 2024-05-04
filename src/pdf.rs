@@ -1,5 +1,5 @@
 use genpdf::elements::Paragraph;
-use genpdf::Alignment;
+use genpdf::elements::Alignment;
 use std::path::PathBuf;
 
 use crate::ast::{Block, Document};
@@ -66,7 +66,12 @@ pub fn render_pdf(file_path: PathBuf, document: Document) {
                 pdf_document.push(genpdf::elements::Break::new(2));
             },
             Block::Paragraph(strings) => {
-                pdf_document.push(Paragraph::new(strings[0].string.clone()));
+                let mut paragraph_style = genpdf::style::Style::new();
+                paragraph_style.set_font_size(13);
+                let mut paragraph = Paragraph::default();
+                paragraph.set_alignment(Alignment::Justified);
+                paragraph.push_styled(strings[0].string.clone(), paragraph_style);
+                pdf_document.push(paragraph);
             },
             Block::NewPage => pdf_document.push(genpdf::elements::PageBreak::new()),
             Block::SectionHeader(strings) => {
