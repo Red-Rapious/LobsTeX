@@ -1,55 +1,31 @@
-use std::fmt::{Debug, Error, Formatter};
+use std::fmt::Debug;
 
-pub enum Expr {
-    Number(i32),
-    Op(Box<Expr>, Opcode, Box<Expr>),
-    Error,
+#[derive(Default, Debug)]
+pub struct DocumentInformation {
+    pub(crate) author: Option<String>,
+    pub(crate) title: Option<String>,
+    pub(crate) date: Option<String>,
 }
 
-pub enum ExprSymbol<'input> {
-    NumSymbol(&'input str),
-    Op(Box<ExprSymbol<'input>>, Opcode, Box<ExprSymbol<'input>>),
-    Error,
+#[derive(Debug)]
+pub struct Document {
+    pub(crate) info: DocumentInformation,
+    pub(crate) body: Vec<Block>,
 }
 
-#[derive(Copy, Clone)]
-pub enum Opcode {
-    Mul,
-    Div,
-    Add,
-    Sub,
+#[derive(Debug)]
+pub struct RichString {
+    string: String,
+    bf: bool,
+    it: bool,
+    tt: bool,
 }
 
-impl Debug for Expr {
-    fn fmt(&self, fmt: &mut Formatter) -> Result<(), Error> {
-        use self::Expr::*;
-        match *self {
-            Number(n) => write!(fmt, "{:?}", n),
-            Op(ref l, op, ref r) => write!(fmt, "({:?} {:?} {:?})", l, op, r),
-            Error => write!(fmt, "error"),
-        }
-    }
-}
-
-impl<'input> Debug for ExprSymbol<'input> {
-    fn fmt(&self, fmt: &mut Formatter) -> Result<(), Error> {
-        use self::ExprSymbol::*;
-        match *self {
-            NumSymbol(n) => write!(fmt, "{:?}", n),
-            Op(ref l, op, ref r) => write!(fmt, "({:?} {:?} {:?})", l, op, r),
-            Error => write!(fmt, "error"),
-        }
-    }
-}
-
-impl Debug for Opcode {
-    fn fmt(&self, fmt: &mut Formatter) -> Result<(), Error> {
-        use self::Opcode::*;
-        match *self {
-            Mul => write!(fmt, "*"),
-            Div => write!(fmt, "/"),
-            Add => write!(fmt, "+"),
-            Sub => write!(fmt, "-"),
-        }
-    }
+#[derive(Debug)]
+pub enum Block {
+    Paragraph(Vec<RichString>),
+    SectionHeader(Vec<RichString>),
+    SubsectionHeader(Vec<RichString>),
+    NewPage,
+    MakeTitle,
 }

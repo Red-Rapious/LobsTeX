@@ -1,33 +1,31 @@
 use std::str::FromStr;
-use crate::ast::{Expr, Opcode}; // (0)
+use crate::ast::{Document, DocumentInformation, Block}; // (0)
 
 grammar;
 
-pub Expr: Box<Expr> = { // (1)
-    Expr ExprOp Factor => Box::new(Expr::Op(<>)), // (2)
-    Factor,
-};
+Text: String = {
+    <s:r"[\w| ]+"> => s.to_string()
+}
 
-ExprOp: Opcode = { // (3)
-    "+" => Opcode::Add,
-    "-" => Opcode::Sub,
-};
+Info: DocumentInformation = {
+    // TODO: choose whether throw error when defined twice
+    "\\date{" <s:Text> "}" <mut i:Info> => {
+        i.date = Some(s) ; i
+    },
+    "\\title{" <s:Text> "}" <mut i:Info> => {
+        i.title = Some(s) ; i
+    },
+    "\\author{" <s:Text> "}" <mut i:Info> => {
+        i.author = Some(s) ; i
+    },
+    "\\begin{document}" => DocumentInformation::default()
+}
 
-Factor: Box<Expr> = {
-    Factor FactorOp Term => Box::new(Expr::Op(<>)),
-    Term,
-};
+Body: Vec<Block> = {
+    "\\newpage" <mut b: Body> => { b.push(Block::NewPage); b },
+    "\\end{document}" => vec![]
+}
 
-FactorOp: Opcode = {
-    "*" => Opcode::Mul,
-    "/" => Opcode::Div,
-};
-
-Term: Box<Expr> = {
-    Num => Box::new(Expr::Number(<>)), // (4)
-    "(" <Expr> ")"
-};
-
-Num: i32 = {
-    r"[0-9]+" => i32::from_str(<>).unwrap()
-};
+pub Document: Document = {
+    <info:Info> <body:Body> => Document { info, body }
+}
