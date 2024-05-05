@@ -1,3 +1,4 @@
+use std::str::FromStr;
 use crate::ast::{Document, DocumentInformation, Block, RichString}; // (0)
 
 grammar;
@@ -38,8 +39,13 @@ Body: Vec<Block> = {
     "\\end{document}" => vec![]
 }
 
+FontSize: u8 = {
+    <mut s:r"\[[0-9]+pt\]"> => u8::from_str(&s[1..s.len()-3]).unwrap()
+}
+
 pub Document: Document = {
-    "\\documentclass{article}" <info:Info> <mut body:Body> => {
+    "\\documentclass" <font_size:FontSize?> "{article}" <mut info:Info> <mut body:Body> => {
+        info.font_size = font_size;
         body.reverse();
         Document { info, body }
     }

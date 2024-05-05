@@ -4,6 +4,8 @@ use std::path::PathBuf;
 
 use crate::ast::{Block, Document};
 
+const DEFAULT_FONT_SIZE: u8 = 12;
+
 pub fn render_pdf(file_path: PathBuf, document: Document) {
     // Load a font from the file system
     let font_family =
@@ -67,7 +69,7 @@ pub fn render_pdf(file_path: PathBuf, document: Document) {
             },
             Block::Paragraph(strings) => {
                 let mut paragraph_style = genpdf::style::Style::new();
-                paragraph_style.set_font_size(13);
+                paragraph_style.set_font_size(info.font_size.unwrap_or(DEFAULT_FONT_SIZE));
                 let mut paragraph = Paragraph::default();
                 paragraph.set_alignment(Alignment::Justified);
                 paragraph.push_styled(strings[0].string.clone(), paragraph_style);

@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[12pt]{article}
 
 \author{Antoine Groudiev}
 \title{A demonstration document}

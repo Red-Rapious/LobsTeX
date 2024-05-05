@@ -5,6 +5,7 @@ pub struct DocumentInformation {
     pub(crate) author: Option<String>,
     pub(crate) title: Option<String>,
     pub(crate) date: Option<String>,
+    pub(crate) font_size: Option<u8>
 }
 
 #[derive(Debug)]
