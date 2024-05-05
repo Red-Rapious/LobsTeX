@@ -1,6 +1,18 @@
 # LobsTeX
 A mini LaTeX clone prototype in Rust.
 
+```
+  _        _       _____   __  __
+ | |   ___| |__ __|_   _|__\ \/ /
+ | |__/ _ \ '_ (_-< | |/ -_)>  < 
+ |____\___/_.__/__/ |_|\___/_/\_\
+                                    
+         /==g           _
+    T   //      >>>/---{_   P
+    e   `==::[[[[|:     _   D
+    X           >>>\---{_   F
+```
+
 ## Compilation and usage
 To build the project, launch at the root of the repository:
 ```bash
