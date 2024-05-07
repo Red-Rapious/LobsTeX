@@ -1,10 +1,14 @@
-use genpdf::elements::Paragraph;
-use genpdf::elements::Alignment;
+use genpdf::elements::{Alignment, Break, Paragraph};
+use genpdf::style::Style;
 use std::path::PathBuf;
 
 use crate::ast::{Block, Document};
 
 const DEFAULT_FONT_SIZE: u8 = 12;
+const SECTION_FONT_SIZE: u8 = 4; // added to default font size
+const SUBSECTION_FONT_SIZE: u8 = 2; // added to default font size
+const POST_SECTION_BREAK: f64 = 0.6;
+const POST_SUBSECTION_BREAK: f64 = 0.3;
 
 pub fn render_pdf(file_path: PathBuf, document: Document) {
     // Load a font from the file system
@@ -33,81 +37,74 @@ pub fn render_pdf(file_path: PathBuf, document: Document) {
                 // Title
                 let mut title = Paragraph::default();
                 title.set_alignment(Alignment::Center);
-    
+
                 let mut title_style = genpdf::style::Style::new();
                 title_style.set_font_size(18);
                 //title_style.set_bold();
-    
+
                 title.push_styled(info.title.clone().unwrap_or("".to_string()), title_style);
                 pdf_document.push(title);
-    
+
                 pdf_document.push(genpdf::elements::Break::new(1));
-    
+
                 // Author
                 let mut author = Paragraph::default();
                 author.set_alignment(Alignment::Center);
-    
+
                 let mut author_style = genpdf::style::Style::new();
                 author_style.set_font_size(13);
-    
+
                 author.push_styled(info.author.clone().unwrap_or("".to_string()), author_style);
                 pdf_document.push(author);
-    
+
                 pdf_document.push(genpdf::elements::Break::new(0.5));
-    
+
                 // Date
                 let mut date = Paragraph::default();
                 date.set_alignment(Alignment::Center);
-    
+
                 let mut date_style = genpdf::style::Style::new();
                 date_style.set_font_size(13);
-    
+
                 date.push_styled(info.date.clone().unwrap_or("".to_string()), date_style);
                 pdf_document.push(date);
-    
+
                 pdf_document.push(genpdf::elements::Break::new(2));
-            },
+            }
             Block::Paragraph(strings) => {
-                let mut paragraph_style = genpdf::style::Style::new();
-                paragraph_style.set_font_size(info.font_size.unwrap_or(DEFAULT_FONT_SIZE));
-                let mut paragraph = Paragraph::default();
-                paragraph.set_alignment(Alignment::Justified);
-                paragraph.push_styled(strings[0].string.clone(), paragraph_style);
+                let paragraph = Paragraph::default()
+                    .styled_string(
+                        strings[0].string.clone(),
+                        Style::new().with_font_size(info.font_size.unwrap_or(DEFAULT_FONT_SIZE)),
+                    )
+                    .aligned(Alignment::Justified);
                 pdf_document.push(paragraph);
-            },
+            }
             Block::NewPage => pdf_document.push(genpdf::elements::PageBreak::new()),
             Block::SectionHeader(strings) => {
                 section_count += 1;
                 subsection_count = 0;
 
-                let mut section_header = Paragraph::default();
-    
-                let mut section_style = genpdf::style::Style::new();
-                section_style.set_font_size(16);
-                section_style.set_bold();
-    
-                let text = format!("{section_count}  {}", strings[0].string.clone());
-    
-                section_header.push_styled(text, section_style);
+                let section_header = Paragraph::default()
+                    .styled_string(
+                        format!("{section_count}  {}", strings[0].string.clone()),
+                        Style::new().with_font_size(info.font_size.unwrap_or(DEFAULT_FONT_SIZE) + SECTION_FONT_SIZE).bold(),
+                    )
+                    .aligned(Alignment::Left);
                 pdf_document.push(section_header);
-    
-                pdf_document.push(genpdf::elements::Break::new(0.6));
-            },
+                pdf_document.push(Break::new(POST_SECTION_BREAK));
+            }
             Block::SubsectionHeader(strings) => {
                 subsection_count += 1;
 
-                let mut subsection_header = Paragraph::default();
-    
-                let mut subsection_style = genpdf::style::Style::new();
-                subsection_style.set_font_size(14);
-                subsection_style.set_bold();
-    
-                let text = format!("{section_count}.{subsection_count}  {}", strings[0].string.clone());
-    
-                subsection_header.push_styled(text, subsection_style);
+                let subsection_header = Paragraph::default()
+                    .styled_string(
+                        format!("{section_count}.{subsection_count}  {}", strings[0].string.clone()),
+                        Style::new().with_font_size(info.font_size.unwrap_or(DEFAULT_FONT_SIZE) + SUBSECTION_FONT_SIZE).bold(),
+                    )
+                    .aligned(Alignment::Left);
                 pdf_document.push(subsection_header);
-    
-                pdf_document.push(genpdf::elements::Break::new(0.3));
+                pdf_document.push(Break::new(POST_SUBSECTION_BREAK));
             }
         }
     }
@@ -115,6 +112,7 @@ pub fn render_pdf(file_path: PathBuf, document: Document) {
     // Render the document and write it to a file
     let mut output_path = file_path.clone();
     output_path.set_extension("pdf");
-    pdf_document.render_to_file(output_path.as_path())
+    pdf_document
+        .render_to_file(output_path.as_path())
         .expect("Failed to write PDF file");
 }

@@ -4,7 +4,7 @@ use crate::ast::{Document, DocumentInformation, Block, RichString}; // (0)
 grammar;
 
 Text: String = {
-    <s:r"[\w| |0-9|,|.|;|/|?|!|+|=]+"> => s.to_string()
+    <s:r"[\w| |,|.|;|/|?|!|+|=]+"> => s.to_string()
 }
 
 Info: DocumentInformation = {

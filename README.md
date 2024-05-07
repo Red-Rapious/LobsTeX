@@ -37,4 +37,3 @@ This project is build in Rust. A simili-LaTeX file is lexed and parsed using [`l
 - Page numbers
 - Margin handling
 - Bold, italic text
-- Justified alignment
