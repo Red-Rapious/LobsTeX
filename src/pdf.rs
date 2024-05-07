@@ -4,6 +4,7 @@ use std::path::PathBuf;
 
 use crate::ast::{Block, Document};
 
+const DEFAULT_MARGIN: u8 = 30;
 const DEFAULT_FONT_SIZE: u8 = 12;
 const SECTION_FONT_SIZE: u8 = 4; // added to default font size
 const SUBSECTION_FONT_SIZE: u8 = 2; // added to default font size
@@ -23,7 +24,7 @@ pub fn render_pdf(file_path: PathBuf, document: Document) {
 
     // Customize the pages
     let mut decorator = genpdf::SimplePageDecorator::new();
-    decorator.set_margins(30);
+    decorator.set_margins(document.info.margin.unwrap_or(DEFAULT_MARGIN));
     pdf_document.set_page_decorator(decorator);
 
     let info = document.info;

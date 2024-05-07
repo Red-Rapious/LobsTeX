@@ -1,4 +1,5 @@
 \documentclass[12pt]{article}
+\usepackage[margin=30]{geometry}
 
 \author{Antoine Groudiev}
 \title{A demonstration document}

@@ -27,6 +27,10 @@ Info: DocumentInformation = {
         }
         i
     },
+    <s:r"\\usepackage\[margin=[0-9]+\]\{geometry\}"> <mut i:Info> => {
+        i.margin = Some(u8::from_str(&s[19..s.len()-11]).unwrap());
+        i
+    },
     "\\begin{document}" => DocumentInformation::default()
 }
 
